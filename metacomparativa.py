@@ -179,14 +179,13 @@ def banda_temperatura(t, T, N=500, kind='linear'):
     Tmean = np.mean(Ti, axis=0)
 
     return t, T, t_common, Tmin, Tmax, Tmean
-#%%
 
-#%% M21
-nombres = ['M15','M16','M17','M18','M19','M20','M21']
-temperatura = [235,235,237,215,250,226,243]
-estufa = ['EN','EV','EN','EN','EN','EN','EN'] # Estufa Nueva/Vieja
-autoclave = ['AuN','AuN','AuN','AuN','AuN','AuN','AuN'] #Autoclave Nuevo/Viejo
-concentracion = [21.6, 16.5, 23.9, 22.5, 22, 20, 20] # g/L Magnetita
+#%% Importo ciclos y resultados  ordenado por temperatura
+nombres = ['M18','M20','M15','M16','M17','M21','M19']
+temperatura = [215,226,235,235,237,243,250]
+estufa = ['EN','EN','EN','EV','EN','EN','EN']
+autoclave = ['AuN','AuN','AuN','AuN','AuN','AuN','AuN']
+concentracion = [22.5,20,21.6,16.5,23.9,20,22] # g/L Magnetita
 
 ciclos_M15 = glob("data_M15/*ciclo_promedio_H_M*")
 resultados_M15 = glob("data_M15/*resultados*")
@@ -335,18 +334,22 @@ for i,e in enumerate(ciclos_M21):
         print('3',os.path.basename(e))
         axs[6,2].plot(H_M21/1000,M_M21,'-',label=f'{SAR_M21[i]:.3uS}')
         
-
-for i,e in enumerate(axs.ravel()[::3]):
-    e.set_title(nombres[i],loc='left')
+for i, e in enumerate(axs.ravel()[::3]):
+    e.set_title(
+        f'{nombres[i]} — {temperatura[i]} °C — '
+        f'{estufa[i]} — {autoclave[i]} — '
+        f'{concentracion[i]} g/L',
+        loc='left')
     e.set_ylabel('M (A/m)')
+
 
 for a in axs.ravel()[-3:]:
     a.set_xlabel('H (kA/m)')
 for a in axs.ravel():
     a.grid()
     a.legend(loc='upper left',frameon=True,shadow=True,title='ESAR (W/g)')
-plt.suptitle(f'Ciclos promedio M15  M16  M17  M18  M19  M20  M21\n300 kHz & [38, 47, 57] kA/m')
-
+    
+plt.suptitle('Ciclos promedio\n300 kHz — [38, 47, 57] kA/m',fontsize=14)
 #%%Ciclos promedio normalizados
 fig01, axs =plt.subplots(7,3,figsize=(15,27),constrained_layout=True,sharey=True,sharex=True)
 #M15
@@ -457,161 +460,176 @@ for a in axs.ravel()[-3:]:
 for i,a in enumerate(axs.ravel()):
     a.grid()
     a.legend(loc='upper left',frameon=True,shadow=True,title='ESAR (W/g)')
-plt.suptitle(f'Ciclos promedio normalizados por concentración\nM15  M16  M17  M18  M19  M20  M21\n300 kHz & [38, 47, 57] kA/m')
+plt.suptitle('Ciclos promedio normalizados por concentracion\n300 kHz — [38, 47, 57] kA/m',fontsize=14)
+plt.show()
 
-#%%
-fig00.savefig('00_comparativa_ciclos.png',dpi=300)
-fig01.savefig('01_comparativa_ciclos_normalizados.png',dpi=300)
-
-#%%% Ciclos todos  Normalizado por concentracion
-# fig01, axs =plt.subplots(1,1,figsize=(9,7),constrained_layout=True,sharey=True,sharex=True)
-# axs.set_ylabel('M (A/m)')
-# lines=['-','--','-.',':']*3
-# ejes=[-57 , -47, -38,0, 38, 47, 57]
-# str_ejes=[str(e) for e in ejes] 
-
-
-
-
-# for i,e in enumerate(ciclos_M21):
-#     if '100dA' in e:
-#         _,_,_, H_M21,M_M21,_ = lector_ciclos(ciclos_M21[i])
-#         print('1',os.path.basename(e))
-#         axs.plot(H_M21/1000,M_M21,c='C0',ls=lines[i],label=f'{SAR_M21[i]:.3uS}')
-#     elif '125dA' in e:
-#         _,_,_, H_M21,M_M21,_ = lector_ciclos(ciclos_M21[i])
-#         print('2',os.path.basename(e))
-#         axs.plot(H_M21/1000,M_M21,c='C1',ls=lines[i],label=f'{SAR_M21[i]:.3uS}')
-#     elif '150dA' in e:
-#         _,_,_, H_M21,M_M21,_ = lector_ciclos(ciclos_M21[i])
-#         print('3',os.path.basename(e))
-#         axs.plot(H_M21/1000,M_M21,c='C2',ls=lines[i],label=f'{SAR_M21[i]:.3uS}')
-
-# axs.set_xticks(ejes)
-# axs.set_xticklabels(str_ejes)
-# axs.grid()
-# axs.set_xlabel('H (kA/m)')
-# axs.legend(loc='upper left',frameon=True,shadow=True,title='ESAR (W/g)',ncol=1)
-# plt.suptitle(f'Ciclos promedio {nombre_M21} \n300 kHz & [38, 47, 57] kA/m\nC = {conc_M21:.1f} g/L')
-
-
-#%%
+#%% Extraigo ressultados 
 res_M15 = []
 
 print('Resultados M15', '='*80,'\n')
 for r in resultados_M15:
     res_M15.append(ResultadosESAR(os.path.dirname(r)))
 rates_M15 = []
-#%%
+
 print('Resultados M16', '='*80,'\n')
 for r in resultados_M16:
     res_M16.append(ResultadosESAR(os.path.dirname(r)))
 rates_M16 = []
+
 print('Resultados M17', '='*80,'\n')
 for r in resultados_M17:
     res_M17.append(ResultadosESAR(os.path.dirname(r)))
 rates_M17 = []
+
 print('Resultados M18', '='*80,'\n')
 for r in resultados_M18:
     res_M18.append(ResultadosESAR(os.path.dirname(r)))
 rates_M18 = []
+
 print('Resultados M19', '='*80,'\n')
 for r in resultados_M19:
     res_M19.append(ResultadosESAR(os.path.dirname(r)))
 rates_M19 = []
+
 print('Resultados M20', '='*80,'\n')
 for r in resultados_M20:
     res_M20.append(ResultadosESAR(os.path.dirname(r)))
 rates_M20 = []
+
 print('Resultados M21', '='*80,'\n')
 for r in resultados_M21:
     res_M21.append(ResultadosESAR(os.path.dirname(r)))
 rates_M21 = []
 
 #%% Templogs
-fig02, axs =plt.subplots(1,3,figsize=(16,5),constrained_layout=True,sharey=True,sharex=True)
-axs[0].set_ylabel('M (A/m)')
-axs[0].set_title('38 kA/m',loc='left')
-axs[1].set_title('47 kA/m',loc='left')
-axs[2].set_title('57 kA/m',loc='left')
+nombres = ['M15','M16','M17','M18','M19','M20','M21']
 
+res = [
+    res_M15, res_M16, res_M17,
+    res_M18, res_M19, res_M20,
+    res_M21
+]
 
-for i,r in enumerate(res_M21):
-    dt = r.time[-1]-r.time[0]
-    dT = r.temperatura[-1]-r.temperatura[0]
-    rate=dT/dt
-    rates_M21.append(rate)
-    print(i,f'WRate = {rate:.2f} °C/s')
-    if '100dA' in r.directorio:
-        axs[0].plot(r.time,r.temperatura,'.-',label=f'{rate:.1f} °C/s')
-    elif '125dA' in r.directorio:
-        axs[1].plot(r.time,r.temperatura,'.-',label=f'{rate:.1f} °C/s')
-    elif '150dA' in r.directorio:
-        axs[2].plot(r.time,r.temperatura,'.-',label=f'{rate:.1f} °C/s')
-
-axs[0].set_ylabel('T (°C)')
-for a in axs:
-    a.grid()
-    a.set_xlabel('t (s)')
-    a.legend(loc='best',frameon=True,shadow=True,title='Warming Rate (°C/s)')
-plt.suptitle(f'Templogs {nombre_M21} \n300 kHz & [38, 47, 57] kA/m\nC = {conc_M21:.1f} g/L')
-
-################################################################################################################################
-
-#%% ploteo comparativo de errorbars de ESAR
 categorias = ['38 kA/m', '47 kA/m', '57 kA/m']
+
+fig02, axs = plt.subplots(
+    1, 7,
+    figsize=(30, 5),
+    constrained_layout=True,
+    sharex=True,
+    sharey=True
+)
+
+campos = ['100dA', '125dA', '150dA']
+colores = ['C0', 'C1', 'C2']
+
+for col, (nombre, resultados) in enumerate(zip(nombres, res)):
+
+    ax = axs[col]
+
+    for campo, color, categoria in zip(campos, colores, categorias):
+
+        for r in resultados:
+
+            if campo in r.directorio:
+
+                dt = r.time[-1] - r.time[0]
+                dT = r.temperatura[-1] - r.temperatura[0]
+                rate = dT / dt
+
+                ax.plot(
+                    r.time,
+                    r.temperatura,
+                    '.-',
+                    color=color,
+                    label=f'{categoria} — {rate:.1f} °C/s'
+                )
+
+    ax.set_title(
+        f'{nombre} - {temperatura[col]} °C - '
+        f'{estufa[col]} - {autoclave[col]} - '
+        f'{concentracion[col]} g/L',
+        loc='left'
+    )
+
+    ax.grid()
+
+    if col == 0:
+        ax.set_ylabel('T (°C)')
+
+    ax.set_xlabel('t (s)')
+
+    ax.legend(
+        loc='best',
+        frameon=True,
+        shadow=True
+    )
+
+plt.suptitle(
+    'Templogs — 300 kHz & [38, 47, 57] kA/m'
+)
+
+
+plt.show()
+#%% ploteo comparativo de errorbars de ESAR tau y Hc
+
+nombres = ['M15','M16','M17','M18','M19','M20','M21']
+temperatura = [235,235,237,215,250,226,243]
+estufa = ['EN','EV','EN','EN','EN','EN','EN']
+autoclave = ['AuN','AuN','AuN','AuN','AuN','AuN','AuN']
+concentracion = [21.6, 16.5, 23.9, 22.5, 22, 20, 20]
+categorias = ['38 kA/m', '47 kA/m', '57 kA/m']
+
+muestras = ['M15','M16','M17','M18','M19','M20','M21']
+
+SAR = [SAR_M15, SAR_M16, SAR_M17, SAR_M18, SAR_M19, SAR_M20, SAR_M21]
+tau = [tau_M15, tau_M16, tau_M17, tau_M18, tau_M19, tau_M20, tau_M21]
+Hc  = [Hc_M15,  Hc_M16,  Hc_M17,  Hc_M18,  Hc_M19,  Hc_M20,  Hc_M21]
+
+datos = [SAR, tau, Hc]
+
 x = np.arange(len(categorias))
-
-fig03, (ax,ax2,ax3) = plt.subplots(1,3,figsize=(12,4),constrained_layout=True)
-
 sep = 0.25
 
-for i,s in enumerate(SAR_M21[:3]):
-    ax.bar(i*sep-sep, s.n, yerr=s.s, width=0.2, capsize=5, color='C0')
+fig03, axs = plt.subplots(3, 7,figsize=(24, 8),sharey='row',sharex='col',constrained_layout=True)
 
-for j,s in enumerate(SAR_M21[3:6]):
-    ax.bar(j*sep + 3*sep, s.n, yerr=s.s, width=0.2, capsize=5, color='C1')
+axs[0,0].set_ylabel('ESAR (W/g)')
+axs[1,0].set_ylabel(r'$\tau$ (ns)')
+axs[2,0].set_ylabel(r'$H_c$ (kA/m)')
 
-for j,s in enumerate(SAR_M21[6:]):
-    ax.bar(j*sep + 7*sep, s.n, yerr=s.s, width=0.2, capsize=5, color='C2')
+for j, muestra in enumerate(muestras):
 
-for i,s in enumerate(tau_M21[:3]):
-    ax2.bar(i*sep-sep, s.n, yerr=s.s, width=0.2, capsize=5, color='C0')
+    axs[0,j].set_title(muestra + ' - ' + str(temperatura[j]) + ' °C - ' 
+                       + estufa[j] + ' - ' + autoclave[j]+ ' - ' 
+                       + str(concentracion[j]) + ' g/L',loc='left')
+for fila, datos_fila in enumerate(datos):
+    for col, muestra in enumerate(datos_fila):
+        ax = axs[fila, col]
+        for i, s in enumerate(muestra[:3]): # 38 kA/m
+            ax.bar(i*sep - sep,s.n,yerr=s.s,width=0.2,capsize=5,color='C0')
 
-for j,s in enumerate(tau_M21[3:6]):
-    ax2.bar(j*sep + 3*sep, s.n, yerr=s.s, width=0.2, capsize=5, color='C1')
+        for i, s in enumerate(muestra[3:6]):# 47 kA/m
+            ax.bar(i*sep + 3*sep,s.n,yerr=s.s,width=0.2,capsize=5,color='C1')
 
-for j,s in enumerate(tau_M21[6:]):
-    ax2.bar(j*sep + 7*sep, s.n, yerr=s.s, width=0.2, capsize=5, color='C2')
+        for i, s in enumerate(muestra[6:9]):# 57 kA/m
+            ax.bar(i*sep + 7*sep,s.n,yerr=s.s,width=0.2,capsize=5,color='C2')
 
-for i,s in enumerate(Hc_M21[:3]):
-    ax3.bar(i*sep-sep, s.n, yerr=s.s, width=0.2, capsize=5, color='C0')
+for a in axs.ravel():
+    a.grid(axis='y', alpha=0.7)
 
-for j,s in enumerate(Hc_M21[3:6]):
-    ax3.bar(j*sep + 3*sep, s.n, yerr=s.s, width=0.2, capsize=5, color='C1')
+for ax in axs[2,:]:
+    ax.grid(axis='y', alpha=0.3)
+    ax.set_xticks(x)
+    ax.set_xticklabels(categorias)
 
-for j,s in enumerate(Hc_M21[6:]):
-    ax3.bar(j*sep + 7*sep, s.n, yerr=s.s, width=0.2, capsize=5, color='C2')
+plt.suptitle('Comparativa ESAR - $\ttau$ - $H_c$ \n300 kHz - [38, 47, 57] kA/m',fontsize=16)
 
-
-for a in [ax,ax2,ax3]:
-    a.grid(axis='y', alpha=0.3)
-    a.set_xticks(x)
-    a.set_xticklabels(categorias)
-    
-
-ax.set_title('ESAR',loc='left')
-ax2.set_title('tau',loc='left')
-ax3.set_title('Hc',loc='left')
-ax.set_ylabel('ESAR (W/g)')
-ax2.set_ylabel('tau (ns)')
-ax3.set_ylabel('Hc (kA/m)')
-plt.suptitle(f'Parametros {nombre_M21} \n300 kHz - [38 , 47, 57] kA/m')
 plt.show()
 
+
 #%% Salvo figuras
-fig00.savefig('00_ciclos_M21.png',dpi=300)
-fig01.savefig('01_ciclos_M21_norm.png',dpi=300)
-fig02.savefig('02_templogs_M21.png',dpi=300)
-fig03.savefig('03_comparativa_M21_ESAR_Tau_Hc.png',dpi=300)
+fig00.savefig('00_metacomparativa_ciclos.png',dpi=300)
+fig01.savefig('01_metacomparativa_ciclos_normalizados.png',dpi=300)
+#fig02.savefig('02_templogs_M21.png',dpi=300)
+fig03.savefig('03_metacomparativa_ESAR_Tau_Hc.png',dpi=300)
 # %%
