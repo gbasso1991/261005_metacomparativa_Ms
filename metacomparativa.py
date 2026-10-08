@@ -170,7 +170,7 @@ def banda_temperatura(t, T, N=500, kind='linear'):
         f = interp1d(tt, TT, kind=kind)
         Ti.append(f(t_common))
 
-    Ti = np.aEsarray(Ti)
+    Ti = np.asarray(Ti)
 
     # estadísticas
     Tmin  = np.min(Ti, axis=0)
@@ -488,6 +488,7 @@ for j, (nombre, res, WR) in enumerate(zip(nombres, resultados, warming_rates)):
 axs[0].set_ylabel('T (°C)')
 plt.suptitle('Templogs\n300 kHz — [38, 47, 57] kA/m',fontsize=16)
 plt.show()
+
 #%% ploteo comparativo de errorbars de ESAR tau y Hc
 
 nombres = ['M18','M20','M15','M16','M17','M21','M19']
@@ -541,8 +542,265 @@ plt.show()
 
 
 #%% Salvo figuras
-fig00.savefig('00_metacomparativa_ciclos.png',dpi=300)
-fig01.savefig('01_metacomparativa_ciclos_normalizados.png',dpi=300)
-fig02.savefig('02_metacomparativa_templogs.png',dpi=300)
-fig03.savefig('03_metacomparativa_ESAR_Tau_Hc.png',dpi=300)
+# fig00.savefig('00_metacomparativa_ciclos.png',dpi=300)
+# fig01.savefig('01_metacomparativa_ciclos_normalizados.png',dpi=300)
+# fig02.savefig('02_metacomparativa_templogs.png',dpi=300)
+# fig03.savefig('03_metacomparativa_ESAR_Tau_Hc.png',dpi=300)
+# %%
+#%% Medias y dispersiones vs temperatura de síntesis
+
+# Campos magnéticos y colores asociados
+campos = ['38 kA/m', '47 kA/m', '57 kA/m']
+colores_campo = ['C0', 'C1', 'C2']
+
+
+def media_error_repeticiones(datos):
+    '''
+    Calcula media y desviación estándar entre las 3 repeticiones
+    para parámetros con 9 valores por muestra (3 por campo)'''
+
+    medias = []
+    errores = []
+
+    for muestra in datos:
+        medias_muestra = []
+        errores_muestra = []
+
+        for i in range(0, 9, 3):
+            valores = np.array([s.n for s in muestra[i:i+3]])
+
+            medias_muestra.append(np.mean(valores))
+            errores_muestra.append(np.std(valores, ddof=1))
+
+        medias.append(medias_muestra)
+        errores.append(errores_muestra)
+
+    return np.array(medias), np.array(errores)
+
+
+# ESAR, tau y Hc: 9 valores por muestra (3 repeticiones por campo)
+ESAR_mean, ESAR_std = media_error_repeticiones(ESAR)
+tau_mean, tau_std = media_error_repeticiones(tau)
+Hc_mean, Hc_std = media_error_repeticiones(Hc)
+
+
+# Warming rate: 3 valores por muestra, uno por campo.
+# Cada valor ya es un ufloat con media y desviación estándar.
+WR_mean = np.array([[s.n for s in muestra] for muestra in warming_rates])
+WR_std  = np.array([[s.s for s in muestra] for muestra in warming_rates])
+
+
+# Datos para graficar
+datos_mean = [ESAR_mean, tau_mean, Hc_mean, WR_mean]
+datos_std = [ESAR_std, tau_std, Hc_std, WR_std]
+
+ylabels = ['ESAR (W/g)',r'$\tau$ (ns)',r'$H_c$ (kA/m)','Warming rate (°C/s)']
+
+titulos = ['ESAR',r'$\tau$',r'$H_c$','Warming rate']
+
+
+# Gráficos
+fig04, axs = plt.subplots(
+    2, 2,
+    figsize=(14, 8),
+    constrained_layout=True,
+    sharex=True
+)
+axs = axs.flatten()
+
+for ax, medias, errores, ylabel, titulo in zip(axs, datos_mean, datos_std, ylabels, titulos):
+    for i, (campo, color) in enumerate(zip(campos, colores_campo)):
+        ax.errorbar(
+            temperatura,
+            medias[:, i],
+            yerr=errores[:, i],
+            fmt='o-',
+            color=color,
+            capsize=4,
+            label=campo)
+# Etiquetas del eje X: temperatura y nombre de muestra
+etiquetas_x = [f'{T}\n{nombre}' for T, nombre in zip(temperatura, nombres)]
+
+for ax in axs:
+    ax.set_xticks(temperatura)
+    ax.set_xticklabels(etiquetas_x)
+    ax.grid()
+    ax.set_ylabel(ylabel)
+    ax.set_title(titulo, loc='left')
+    ax.legend(frameon=True, shadow=True)
+
+axs[2].set_xlabel('Temperatura de síntesis (°C)')
+axs[3].set_xlabel('Temperatura de síntesis (°C)')
+
+plt.suptitle('Valores medios vs temperatura de síntesis\n'
+    '300 kHz — [38, 47, 57] kA/m',fontsize=16)
+
+plt.savefig('04_metacomparativa_medias_vs_temperatura.png',
+    dpi=300)
+plt.show()
+# %%
+#%% Comparación de curvas térmicas promedio por campo magnético
+
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.interpolate import interp1d
+
+# Muestras y temperaturas de síntesis
+nombres = ['M18', 'M20', 'M15', 'M16', 'M17', 'M21', 'M19']
+temperaturas_sintesis = [215, 226, 235, 235, 237, 243, 250]
+
+resultados = [
+    res_M18, res_M20, res_M15, res_M16,
+    res_M17, res_M21, res_M19
+]
+
+campos = ['38 kA/m', '47 kA/m', '57 kA/m']
+
+# Paleta categórica de alto contraste: un color por muestra
+colores = {
+    'M18': '#0072B2',  # azul
+    'M20': '#E69F00',  # naranja
+    'M15': '#009E73',  # verde
+    'M16': '#CC79A7',  # rosa-violeta
+    'M17': '#D55E00',  # rojo anaranjado
+    'M21': '#56B4E9',  # celeste
+    'M19': '#000000',  # negro
+}
+
+# Estilos de línea complementarios
+estilos_linea = {
+    'M18': '-',
+    'M20': '-',
+    'M15': '-',
+    'M16': '--',
+    'M17': '-.',
+    'M21': '-',
+    'M19': ':',
+}
+
+
+def banda_temperatura(t, T, N=500, kind='linear'):
+    """
+    Interpola varias curvas T(t) sobre una grilla temporal común.
+
+    Devuelve:
+        t_common: grilla temporal común
+        Tmin: mínimo punto a punto
+        Tmax: máximo punto a punto
+        Tmean: promedio punto a punto
+
+    La interpolación se limita al intervalo temporal compartido
+    por todas las repeticiones.
+    """
+    t = [np.asarray(tt) for tt in t]
+    T = [np.asarray(TT) for TT in T]
+
+    datos = []
+
+    for tt, TT in zip(t, T):
+        # Ordenar los datos por tiempo
+        orden = np.argsort(tt)
+        tt = tt[orden]
+        TT = TT[orden]
+
+        # Eliminar tiempos duplicados
+        tt_unicos, indices = np.unique(tt, return_index=True)
+        TT = TT[indices]
+
+        datos.append((tt_unicos, TT))
+
+    # Intervalo temporal común
+    tmin = max(tt.min() for tt, TT in datos)
+    tmax = min(tt.max() for tt, TT in datos)
+
+    if tmin >= tmax:
+        raise ValueError(
+            "Las curvas no tienen un intervalo temporal común."
+        )
+
+    t_common = np.linspace(tmin, tmax, N)
+
+    # Interpolación de las repeticiones
+    Ti = []
+
+    for tt, TT in datos:
+        f = interp1d(tt, TT, kind=kind, bounds_error=True)
+        Ti.append(f(t_common))
+
+    Ti = np.asarray(Ti)
+
+    Tmin = np.min(Ti, axis=0)
+    Tmax = np.max(Ti, axis=0)
+    Tmean = np.mean(Ti, axis=0)
+
+    return t_common, Tmin, Tmax, Tmean
+
+
+# Figura: un panel por campo magnético
+fig, axs = plt.subplots(
+    1, 3,
+    figsize=(18, 5.5),
+    constrained_layout=True,
+    sharey=True
+)
+
+for i, (ax, campo) in enumerate(zip(axs, campos)):
+
+    for nombre, T_sintesis, resultado in zip(
+        nombres, temperaturas_sintesis, resultados
+    ):
+
+        # Tres repeticiones por campo:
+        # índices 0-2: 38 kA/m
+        # índices 3-5: 47 kA/m
+        # índices 6-8: 57 kA/m
+        repeticiones = resultado[3*i:3*i+3]
+
+        t = [r.time for r in repeticiones]
+        T = [r.temperatura for r in repeticiones]
+
+        t_common, Tmin, Tmax, Tmean = banda_temperatura(t, T)
+
+        color = colores[nombre]
+        estilo = estilos_linea[nombre]
+
+        # Curva promedio
+        ax.plot(
+            t_common,
+            Tmean,
+            color=color,
+            linestyle=estilo,
+            linewidth=2.2,
+            label=f'{nombre} ({T_sintesis} °C)'
+        )
+
+        # Banda min-max de las tres repeticiones
+        ax.fill_between(
+            t_common,
+            Tmin,
+            Tmax,
+            color=color,
+            alpha=0.15,
+            linewidth=0
+        )
+
+    ax.set_title(campo)
+    ax.set_xlabel('Tiempo (s)')
+    ax.grid(True, alpha=0.3)
+    ax.legend(fontsize=8, ncol=3,loc='lower right')
+
+axs[0].set_ylabel('Temperatura (°C)')
+
+fig.suptitle(
+    'Curvas térmicas promedio por campo magnético',
+    fontsize=14
+)
+
+plt.savefig(
+    '05_curvas_termicas_promedio_por_campo.png',
+    dpi=300,
+    bbox_inches='tight'
+)
+
+plt.show()
 # %%
