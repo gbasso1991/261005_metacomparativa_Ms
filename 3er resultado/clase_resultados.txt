@@ -46,23 +46,14 @@ class ResultadosESAR:
             - Archivo 'resultados.txt' (o '*resultados.txt')
             - Subdirectorio 'ciclos_H_M/' con archivos '*_ciclo_H_M.txt'
         """
-        # Puede recibir un directorio o directamente un archivo resultados.txt
-        ruta = os.path.abspath(directorio_analisis)
-
-        if os.path.isfile(ruta):
-            # Se recibió directamente el archivo de resultados
-            self.ruta_resultados = ruta
-            self.directorio = os.path.dirname(ruta)
-
-        elif os.path.isdir(ruta):
-            # Se recibió un directorio
-            self.directorio = ruta
-
-        else:
-            raise FileNotFoundError(f"✗ Ruta no encontrada: {ruta}")
-
+        self.directorio = os.path.abspath(directorio_analisis)
         self.directorio_ciclos = os.path.join(self.directorio, 'ciclos_H_M')
-        self.nombre_base = os.path.basename(self.directorio)    
+        self.nombre_base = os.path.basename(self.directorio)
+        
+        # Verificar que el directorio existe
+        if not os.path.exists(self.directorio):
+            raise FileNotFoundError(f"✗ Directorio no encontrado: {self.directorio}")
+        
         print(f"\n{'='*60}")
         print(f"CARGANDO RESULTADOS ESAR")
         print(f"{'='*60}")
@@ -84,20 +75,18 @@ class ResultadosESAR:
 
     
     def _cargar_resultados_txt(self):
-        # Si ya se indicó un archivo específico, usarlo
-        if hasattr(self, 'ruta_resultados'):
-            pass
-
-        else:
-            # Buscar cualquier archivo que termine en resultados.txt
-            patron_resultados = os.path.join(self.directorio, '*resultados.txt')
-            archivos_resultados = glob.glob(patron_resultados)
-
-            if not archivos_resultados:
-                raise FileNotFoundError(
-                    f"✗ No se encontró archivo resultados.txt en {self.directorio}")
-
-            self.ruta_resultados = archivos_resultados[0]
+        """Busca y carga el archivo resultados.txt en el directorio"""
+        # Buscar cualquier archivo que termine en 'resultados.txt'
+        patron_resultados = os.path.join(self.directorio, '*resultados.txt')
+        archivos_resultados = glob.glob(patron_resultados)
+        
+        if not archivos_resultados:
+            raise FileNotFoundError(
+                f"✗ No se encontró archivo resultados.txt en {self.directorio}"
+            )
+        
+        # Tomar el primer archivo que coincida (debería haber solo uno)
+        self.ruta_resultados = archivos_resultados[0]
         nombre_archivo = os.path.basename(self.ruta_resultados)
         print(f"✓ Archivo de resultados: {nombre_archivo}")
         
