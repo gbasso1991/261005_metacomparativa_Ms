@@ -202,18 +202,19 @@ def warming_rates_promedio(resultados):
 
     return rates_promedio
 #%% Importo ciclos y resultados  ordenado por temperatura
-nombres = ['M18','M20','M15','M16','M17','M21','M19']
-temperatura = [215,226,235,235,237,243,250]
-concentracion = [22.5,20,21.6,16.5,23.9,20,22] # g/L Magnetita
-nombres = ['M18', 'M20', 'M15', 'M16', 'M17', 'M21', 'M19']
+#16 Oct saco M16 pues es otra estufa
+nombres = ['M18','M20','M15','M17','M21','M19']#['M18','M20','M15','M16','M17','M21','M19']
+temperatura = [215,226,235,237,243,250]#[215,226,235,235,237,243,250]
+concentracion = [22.5,22.6,21.6,23.9,24.1,22]#[22.5,22.6,21.6,16.5,23.9,24.1,22] # g/L Magnetita
+nombres = ['M18', 'M20', 'M15', 'M17', 'M21', 'M19']#['M18', 'M20', 'M15', 'M16', 'M17', 'M21', 'M19']
 ciclos_M18 = glob("data_M18/*ciclo_promedio_H_M*")
 resultados_M18 = glob("data_M18/*resultados*")
 ciclos_M20 = glob("data_M20/*ciclo_promedio_H_M*")
 resultados_M20 = glob("data_M20/*resultados*")
 ciclos_M15 = glob("data_M15/*ciclo_promedio_H_M*")
 resultados_M15 = glob("data_M15/*resultados*")
-ciclos_M16 = glob("data_M16/*ciclo_promedio_H_M*")
-resultados_M16 = glob("data_M16/*resultados*")
+# ciclos_M16 = glob("data_M16/*ciclo_promedio_H_M*")
+# resultados_M16 = glob("data_M16/*resultados*")
 ciclos_M17 = glob("data_M17/*ciclo_promedio_H_M*")
 resultados_M17 = glob("data_M17/*resultados*")
 ciclos_M21 = glob("data_M21/*ciclo_promedio_H_M*")
@@ -221,10 +222,10 @@ resultados_M21 = glob("data_M21/*resultados*")
 ciclos_M19 = glob("data_M19/*ciclo_promedio_H_M*")
 resultados_M19 = glob("data_M19/*resultados*")
 #%% Ordeno listas
-for c in [ciclos_M18, ciclos_M20, ciclos_M15, ciclos_M16, ciclos_M17, ciclos_M19, ciclos_M21]:
+for c in [ciclos_M18, ciclos_M20, ciclos_M15,  ciclos_M17, ciclos_M19, ciclos_M21]:
     c.sort()
 
-for r in [resultados_M18, resultados_M20, resultados_M15, resultados_M16, resultados_M17, resultados_M19, resultados_M21]:
+for r in [resultados_M18, resultados_M20, resultados_M15,resultados_M17, resultados_M19, resultados_M21]:
     r.sort()    
 #%% extraigo ESAR, tau y Hc
 ESAR_M18, tau_M18, Hc_M18 = extraer_ESAR_tau(resultados_M18)
@@ -242,7 +243,7 @@ res_M21=[]
 ESAR_M19, tau_M19, Hc_M19 = extraer_ESAR_tau(resultados_M19)
 res_M19=[]
 #%% ploteo ciclos
-fig00,axs=plt.subplots(7,3,figsize=(15,27),constrained_layout=True,sharey=True,sharex=True)
+fig00,axs=plt.subplots(6,3,figsize=(15,23),constrained_layout=True,sharey=True,sharex=True)
 #M18
 for i,e in enumerate(ciclos_M18):
     if '100dA' in e:
@@ -276,50 +277,50 @@ for i,e in enumerate(ciclos_M15):
     elif '150dA' in e:
         _,_,_,H_M15,M_M15,_=lector_ciclos(ciclos_M15[i])
         axs[2,2].plot(H_M15,M_M15,'-',color='C2',label=f'{ESAR_M15[i]:.3uS}')
-#M16
-for i,e in enumerate(ciclos_M16):
-    if '100dA' in e:
-        _,_,_,H_M16,M_M16,_=lector_ciclos(ciclos_M16[i])
-        axs[3,0].plot(H_M16,M_M16,'-',color='C0',label=f'{ESAR_M16[i]:.3uS}')
-    elif '125dA' in e:
-        _,_,_,H_M16,M_M16,_=lector_ciclos(ciclos_M16[i])
-        axs[3,1].plot(H_M16,M_M16,'-',color='C1',label=f'{ESAR_M16[i]:.3uS}')
-    elif '150dA' in e:
-        _,_,_,H_M16,M_M16,_=lector_ciclos(ciclos_M16[i])
-        axs[3,2].plot(H_M16,M_M16,'-',color='C2',label=f'{ESAR_M16[i]:.3uS}')
+# #M16
+# for i,e in enumerate(ciclos_M16):
+#     if '100dA' in e:
+#         _,_,_,H_M16,M_M16,_=lector_ciclos(ciclos_M16[i])
+#         axs[3,0].plot(H_M16,M_M16,'-',color='C0',label=f'{ESAR_M16[i]:.3uS}')
+#     elif '125dA' in e:
+#         _,_,_,H_M16,M_M16,_=lector_ciclos(ciclos_M16[i])
+#         axs[3,1].plot(H_M16,M_M16,'-',color='C1',label=f'{ESAR_M16[i]:.3uS}')
+#     elif '150dA' in e:
+#         _,_,_,H_M16,M_M16,_=lector_ciclos(ciclos_M16[i])
+#         axs[3,2].plot(H_M16,M_M16,'-',color='C2',label=f'{ESAR_M16[i]:.3uS}')
 #M17
 for i,e in enumerate(ciclos_M17):
     if '100dA' in e:
         _,_,_,H_M17,M_M17,_=lector_ciclos(ciclos_M17[i])
-        axs[4,0].plot(H_M17,M_M17,'-',color='C0',label=f'{ESAR_M17[i]:.2uS}')
+        axs[3,0].plot(H_M17,M_M17,'-',color='C0',label=f'{ESAR_M17[i]:.2uS}')
     elif '125dA' in e:
         _,_,_,H_M17,M_M17,_=lector_ciclos(ciclos_M17[i])
-        axs[4,1].plot(H_M17,M_M17,'-',color='C1',label=f'{ESAR_M17[i]:.2uS}')
+        axs[3,1].plot(H_M17,M_M17,'-',color='C1',label=f'{ESAR_M17[i]:.2uS}')
     elif '150dA' in e:
         _,_,_,H_M17,M_M17,_=lector_ciclos(ciclos_M17[i])
-        axs[4,2].plot(H_M17,M_M17,'-',color='C2',label=f'{ESAR_M17[i]:.2uS}')
+        axs[3,2].plot(H_M17,M_M17,'-',color='C2',label=f'{ESAR_M17[i]:.2uS}')
 #M21
 for i,e in enumerate(ciclos_M21):
     if '100dA' in e:
         _,_,_,H_M21,M_M21,_=lector_ciclos(ciclos_M21[i])
-        axs[5,0].plot(H_M21,M_M21,'-',color='C0',label=f'{ESAR_M21[i]:.2uS}')
+        axs[4,0].plot(H_M21,M_M21,'-',color='C0',label=f'{ESAR_M21[i]:.2uS}')
     elif '125dA' in e:
         _,_,_,H_M21,M_M21,_=lector_ciclos(ciclos_M21[i])
-        axs[5,1].plot(H_M21,M_M21,'-',color='C1',label=f'{ESAR_M21[i]:.2uS}')
+        axs[4,1].plot(H_M21,M_M21,'-',color='C1',label=f'{ESAR_M21[i]:.2uS}')
     elif '150dA' in e:
         _,_,_,H_M21,M_M21,_=lector_ciclos(ciclos_M21[i])
-        axs[5,2].plot(H_M21,M_M21,'-',color='C2',label=f'{ESAR_M21[i]:.3uS}')
+        axs[4,2].plot(H_M21,M_M21,'-',color='C2',label=f'{ESAR_M21[i]:.3uS}')
 #M19
 for i,e in enumerate(ciclos_M19):
     if '100dA' in e:
         _,_,_,H_M19,M_M19,_=lector_ciclos(ciclos_M19[i])
-        axs[6,0].plot(H_M19,M_M19,'-',color='C0',label=f'{ESAR_M19[i]:.2uS}')
+        axs[5,0].plot(H_M19,M_M19,'-',color='C0',label=f'{ESAR_M19[i]:.2uS}')
     elif '125dA' in e:
         _,_,_,H_M19,M_M19,_=lector_ciclos(ciclos_M19[i])
-        axs[6,1].plot(H_M19,M_M19,'-',color='C1',label=f'{ESAR_M19[i]:.2uS}')
+        axs[5,1].plot(H_M19,M_M19,'-',color='C1',label=f'{ESAR_M19[i]:.2uS}')
     elif '150dA' in e:
         _,_,_,H_M19,M_M19,_=lector_ciclos(ciclos_M19[i])
-        axs[6,2].plot(H_M19,M_M19,'-',color='C2',label=f'{ESAR_M19[i]:.2uS}')
+        axs[5,2].plot(H_M19,M_M19,'-',color='C2',label=f'{ESAR_M19[i]:.2uS}')
 
 for i,e in enumerate(axs.ravel()[::3]):
     e.set_title(f'{nombres[i]} — {temperatura[i]} °C — {concentracion[i]} g/L',loc='left')
@@ -332,84 +333,84 @@ for a in axs.ravel():
 plt.suptitle('Ciclos promedio\n300 kHz — [38, 47, 57] kA/m',fontsize=14)
 
 #%% #%% Ciclos promedio normalizados
-fig01,axs=plt.subplots(7,3,figsize=(15,27),constrained_layout=True,sharey=True,sharex=True)
+fig01,axs=plt.subplots(6,3,figsize=(15,23),constrained_layout=True,sharey=True,sharex=True)
 #M18
 for i,e in enumerate(ciclos_M18):
     if '100dA' in e:
         _,_,_,H_M18,M_M18,_=lector_ciclos(ciclos_M18[i])
-        axs[0,0].plot(H_M18,M_M18/concentracion[3],'-',color='C0',label=f'{ESAR_M18[i]:.2uS}')
+        axs[0,0].plot(H_M18,M_M18/concentracion[0],'-',color='C0',label=f'{ESAR_M18[i]:.2uS}')
     elif '125dA' in e:
         _,_,_,H_M18,M_M18,_=lector_ciclos(ciclos_M18[i])
-        axs[0,1].plot(H_M18,M_M18/concentracion[3],'-',color='C1',label=f'{ESAR_M18[i]:.2uS}')
+        axs[0,1].plot(H_M18,M_M18/concentracion[0],'-',color='C1',label=f'{ESAR_M18[i]:.2uS}')
     elif '150dA' in e:
         _,_,_,H_M18,M_M18,_=lector_ciclos(ciclos_M18[i])
-        axs[0,2].plot(H_M18,M_M18/concentracion[3],'-',color='C2',label=f'{ESAR_M18[i]:.2uS}')
+        axs[0,2].plot(H_M18,M_M18/concentracion[0],'-',color='C2',label=f'{ESAR_M18[i]:.2uS}')
 #M20
 for i,e in enumerate(ciclos_M20):
     if '100dA' in e:
         _,_,_,H_M20,M_M20,_=lector_ciclos(ciclos_M20[i])
-        axs[1,0].plot(H_M20,M_M20/concentracion[5],'-',color='C0',label=f'{ESAR_M20[i]:.2uS}')
+        axs[1,0].plot(H_M20,M_M20/concentracion[1],'-',color='C0',label=f'{ESAR_M20[i]:.2uS}')
     elif '125dA' in e:
         _,_,_,H_M20,M_M20,_=lector_ciclos(ciclos_M20[i])
-        axs[1,1].plot(H_M20,M_M20/concentracion[5],'-',color='C1',label=f'{ESAR_M20[i]:.2uS}')
+        axs[1,1].plot(H_M20,M_M20/concentracion[1],'-',color='C1',label=f'{ESAR_M20[i]:.2uS}')
     elif '150dA' in e:
         _,_,_,H_M20,M_M20,_=lector_ciclos(ciclos_M20[i])
-        axs[1,2].plot(H_M20,M_M20/concentracion[5],'-',color='C2',label=f'{ESAR_M20[i]:.3uS}')
+        axs[1,2].plot(H_M20,M_M20/concentracion[1],'-',color='C2',label=f'{ESAR_M20[i]:.3uS}')
 #M15
 for i,e in enumerate(ciclos_M15):
     if '100dA' in e:
         _,_,_,H_M15,M_M15,_=lector_ciclos(ciclos_M15[i])
-        axs[2,0].plot(H_M15,M_M15/concentracion[0],'-',color='C0',label=f'{ESAR_M15[i]:.2uS}')
+        axs[2,0].plot(H_M15,M_M15/concentracion[2],'-',color='C0',label=f'{ESAR_M15[i]:.2uS}')
     elif '125dA' in e:
         _,_,_,H_M15,M_M15,_=lector_ciclos(ciclos_M15[i])
-        axs[2,1].plot(H_M15,M_M15/concentracion[0],'-',color='C1',label=f'{ESAR_M15[i]:.3uS}')
+        axs[2,1].plot(H_M15,M_M15/concentracion[2],'-',color='C1',label=f'{ESAR_M15[i]:.3uS}')
     elif '150dA' in e:
         _,_,_,H_M15,M_M15,_=lector_ciclos(ciclos_M15[i])
-        axs[2,2].plot(H_M15,M_M15/concentracion[0],'-',color='C2',label=f'{ESAR_M15[i]:.3uS}')
+        axs[2,2].plot(H_M15,M_M15/concentracion[2],'-',color='C2',label=f'{ESAR_M15[i]:.3uS}')
 #M16
-for i,e in enumerate(ciclos_M16):
-    if '100dA' in e:
-        _,_,_,H_M16,M_M16,_=lector_ciclos(ciclos_M16[i])
-        axs[3,0].plot(H_M16,M_M16/concentracion[1],'-',color='C0',label=f'{ESAR_M16[i]:.3uS}')
-    elif '125dA' in e:
-        _,_,_,H_M16,M_M16,_=lector_ciclos(ciclos_M16[i])
-        axs[3,1].plot(H_M16,M_M16/concentracion[1],'-',color='C1',label=f'{ESAR_M16[i]:.3uS}')
-    elif '150dA' in e:
-        _,_,_,H_M16,M_M16,_=lector_ciclos(ciclos_M16[i])
-        axs[3,2].plot(H_M16,M_M16/concentracion[1],'-',color='C2',label=f'{ESAR_M16[i]:.3uS}')
+# for i,e in enumerate(ciclos_M16):
+#     if '100dA' in e:
+#         _,_,_,H_M16,M_M16,_=lector_ciclos(ciclos_M16[i])
+#         axs[3,0].plot(H_M16,M_M16/concentracion[1],'-',color='C0',label=f'{ESAR_M16[i]:.3uS}')
+#     elif '125dA' in e:
+#         _,_,_,H_M16,M_M16,_=lector_ciclos(ciclos_M16[i])
+#         axs[3,1].plot(H_M16,M_M16/concentracion[1],'-',color='C1',label=f'{ESAR_M16[i]:.3uS}')
+#     elif '150dA' in e:
+#         _,_,_,H_M16,M_M16,_=lector_ciclos(ciclos_M16[i])
+#         axs[3,2].plot(H_M16,M_M16/concentracion[1],'-',color='C2',label=f'{ESAR_M16[i]:.3uS}')
 #M17
 for i,e in enumerate(ciclos_M17):
     if '100dA' in e:
         _,_,_,H_M17,M_M17,_=lector_ciclos(ciclos_M17[i])
-        axs[4,0].plot(H_M17,M_M17/concentracion[2],'-',color='C0',label=f'{ESAR_M17[i]:.2uS}')
+        axs[3,0].plot(H_M17,M_M17/concentracion[3],'-',color='C0',label=f'{ESAR_M17[i]:.2uS}')
     elif '125dA' in e:
         _,_,_,H_M17,M_M17,_=lector_ciclos(ciclos_M17[i])
-        axs[4,1].plot(H_M17,M_M17/concentracion[2],'-',color='C1',label=f'{ESAR_M17[i]:.3uS}')
+        axs[3,1].plot(H_M17,M_M17/concentracion[3],'-',color='C1',label=f'{ESAR_M17[i]:.3uS}')
     elif '150dA' in e:
         _,_,_,H_M17,M_M17,_=lector_ciclos(ciclos_M17[i])
-        axs[4,2].plot(H_M17,M_M17/concentracion[2],'-',color='C2',label=f'{ESAR_M17[i]:.3uS}')
+        axs[3,2].plot(H_M17,M_M17/concentracion[3],'-',color='C2',label=f'{ESAR_M17[i]:.3uS}')
 #M21
 for i,e in enumerate(ciclos_M21):
     if '100dA' in e:
         _,_,_,H_M21,M_M21,_=lector_ciclos(ciclos_M21[i])
-        axs[5,0].plot(H_M21,M_M21/concentracion[6],'-',color='C0',label=f'{ESAR_M21[i]:.2uS}')
+        axs[4,0].plot(H_M21,M_M21/concentracion[4],'-',color='C0',label=f'{ESAR_M21[i]:.2uS}')
     elif '125dA' in e:
         _,_,_,H_M21,M_M21,_=lector_ciclos(ciclos_M21[i])
-        axs[5,1].plot(H_M21,M_M21/concentracion[6],'-',color='C1',label=f'{ESAR_M21[i]:.2uS}')
+        axs[4,1].plot(H_M21,M_M21/concentracion[4],'-',color='C1',label=f'{ESAR_M21[i]:.2uS}')
     elif '150dA' in e:
         _,_,_,H_M21,M_M21,_=lector_ciclos(ciclos_M21[i])
-        axs[5,2].plot(H_M21,M_M21/concentracion[6],'-',color='C2',label=f'{ESAR_M21[i]:.3uS}')
+        axs[4,2].plot(H_M21,M_M21/concentracion[4],'-',color='C2',label=f'{ESAR_M21[i]:.3uS}')
 #M19
 for i,e in enumerate(ciclos_M19):
     if '100dA' in e:
         _,_,_,H_M19,M_M19,_=lector_ciclos(ciclos_M19[i])
-        axs[6,0].plot(H_M19,M_M19/concentracion[4],'-',color='C0',label=f'{ESAR_M19[i]:.2uS}')
+        axs[5,0].plot(H_M19,M_M19/concentracion[5],'-',color='C0',label=f'{ESAR_M19[i]:.2uS}')
     elif '125dA' in e:
         _,_,_,H_M19,M_M19,_=lector_ciclos(ciclos_M19[i])
-        axs[6,1].plot(H_M19,M_M19/concentracion[4],'-',color='C1',label=f'{ESAR_M19[i]:.3uS}')
+        axs[5,1].plot(H_M19,M_M19/concentracion[5],'-',color='C1',label=f'{ESAR_M19[i]:.3uS}')
     elif '150dA' in e:
         _,_,_,H_M19,M_M19,_=lector_ciclos(ciclos_M19[i])
-        axs[6,2].plot(H_M19,M_M19/concentracion[4],'-',color='C2',label=f'{ESAR_M19[i]:.3uS}')
+        axs[5,2].plot(H_M19,M_M19/concentracion[5],'-',color='C2',label=f'{ESAR_M19[i]:.3uS}')
 
 for i,e in enumerate(axs.ravel()[::3]):
     e.set_title(f'{nombres[i]} — {temperatura[i]} °C — {concentracion[i]} g/L',loc='left')
@@ -462,16 +463,13 @@ WR_M19 = warming_rates_promedio(res_M19)
 
 #%% Templogs — todas las muestras
 
-nombres = ['M18', 'M20', 'M15', 'M16', 'M17', 'M21', 'M19']
-temperatura = [215, 226, 235, 235, 237, 243, 250]
-concentracion = [22.5, 20, 21.6, 16.5, 23.9, 20, 22]
 campos = ['38 kA/m', '47 kA/m', '57 kA/m']
 colores = ['C0', 'C1', 'C2','C0', 'C1', 'C2','C0', 'C1', 'C2']
-resultados = [res_M18,res_M20,res_M15,res_M16,res_M17,res_M21,res_M19]
 
-warming_rates = [WR_M18,WR_M20,WR_M15,WR_M16,WR_M17,WR_M21,WR_M19]
+resultados = [res_M18,res_M20,res_M15,res_M17,res_M21,res_M19]
+warming_rates = [WR_M18,WR_M20,WR_M15,WR_M17,WR_M21,WR_M19]
 
-fig02, axs = plt.subplots(1, 7,figsize=(27, 5),constrained_layout=True,sharex=True,sharey=True)
+fig02, axs = plt.subplots(1, 6,figsize=(23, 5),constrained_layout=True,sharex=True,sharey=True)
 for j, (nombre, res, WR) in enumerate(zip(nombres, resultados, warming_rates)):
     ax = axs[j]
     for i, r in enumerate(res):
@@ -491,23 +489,23 @@ plt.show()
 
 #%% ploteo comparativo de errorbars de ESAR tau y Hc
 
-nombres = ['M18','M20','M15','M16','M17','M21','M19']
-muestras = ['M18','M20','M15','M16','M17','M21','M19']
+nombres = ['M18','M20','M15','M17','M21','M19']
+muestras = ['M18','M20','M15','M17','M21','M19']
 
-temperatura = [215,226,235,235,237,243,250]
-concentracion = [22.5,20,21.6,16.5,23.9,20,22]
+temperatura = [215,226,235,237,243,250]
+concentracion = [22.5,22.6,21.6,23.9,24.1,22]
 categorias = ['38 kA/m', '47 kA/m', '57 kA/m']
 
-ESAR = [ESAR_M18, ESAR_M20, ESAR_M15, ESAR_M16, ESAR_M17, ESAR_M21, ESAR_M19]
-tau = [tau_M18, tau_M20, tau_M15, tau_M16, tau_M17, tau_M21, tau_M19]
-Hc = [Hc_M18, Hc_M20, Hc_M15, Hc_M16, Hc_M17, Hc_M21, Hc_M19]
+ESAR = [ESAR_M18, ESAR_M20, ESAR_M15, ESAR_M17, ESAR_M21, ESAR_M19]
+tau = [tau_M18, tau_M20, tau_M15,  tau_M17, tau_M21, tau_M19]
+Hc = [Hc_M18, Hc_M20, Hc_M15, Hc_M17, Hc_M21, Hc_M19]
 
 datos = [ESAR, tau, Hc]
 
 x = np.arange(len(categorias))
 sep = 0.25
 
-fig03, axs = plt.subplots(3, 7,figsize=(24, 8),sharey='row',sharex='col',constrained_layout=True)
+fig03, axs = plt.subplots(3, 6,figsize=(24, 9),sharey='row',sharex='col',constrained_layout=True)
 
 axs[0,0].set_ylabel('ESAR (W/g)')
 axs[1,0].set_ylabel(r'$tau$ (ns)')
@@ -542,12 +540,15 @@ plt.show()
 
 
 #%% Salvo figuras
-# fig00.savefig('00_metacomparativa_ciclos.png',dpi=300)
-# fig01.savefig('01_metacomparativa_ciclos_normalizados.png',dpi=300)
-# fig02.savefig('02_metacomparativa_templogs.png',dpi=300)
-# fig03.savefig('03_metacomparativa_ESAR_Tau_Hc.png',dpi=300)
+fig00.savefig('00_metacomparativa_ciclos.png',dpi=300)
+fig01.savefig('01_metacomparativa_ciclos_normalizados.png',dpi=300)
+fig02.savefig('02_metacomparativa_templogs.png',dpi=300)
+fig03.savefig('03_metacomparativa_ESAR_Tau_Hc.png',dpi=300)
+
+
 # %%
-#%% Medias y dispersiones vs temperatura de síntesis
+#
+# %% Medias y dispersiones vs temperatura de síntesis
 
 # Campos magnéticos y colores asociados
 campos = ['38 kA/m', '47 kA/m', '57 kA/m']
@@ -590,49 +591,37 @@ WR_mean = np.array([[s.n for s in muestra] for muestra in warming_rates])
 WR_std  = np.array([[s.s for s in muestra] for muestra in warming_rates])
 
 
-# Datos para graficar
+#%% Datos para graficar
 datos_mean = [ESAR_mean, tau_mean, Hc_mean, WR_mean]
 datos_std = [ESAR_std, tau_std, Hc_std, WR_std]
 
 ylabels = ['ESAR (W/g)',r'$\tau$ (ns)',r'$H_c$ (kA/m)','Warming rate (°C/s)']
-
 titulos = ['ESAR',r'$\tau$',r'$H_c$','Warming rate']
 
 
 # Gráficos
-fig04, axs = plt.subplots(
-    2, 2,
-    figsize=(14, 8),
-    constrained_layout=True,
-    sharex=True
-)
+fig04, axs = plt.subplots(2, 2,figsize=(14, 8),constrained_layout=True,sharex=True)
 axs = axs.flatten()
 
 for ax, medias, errores, ylabel, titulo in zip(axs, datos_mean, datos_std, ylabels, titulos):
     for i, (campo, color) in enumerate(zip(campos, colores_campo)):
-        ax.errorbar(
-            temperatura,
-            medias[:, i],
-            yerr=errores[:, i],
-            fmt='o-',
-            color=color,
-            capsize=4,
-            label=campo)
-# Etiquetas del eje X: temperatura y nombre de muestra
+        ax.errorbar(temperatura,medias[:, i],yerr=errores[:, i],fmt='.-',color=color,capsize=4,label=campo)
+        #print(ylabel , titulo)
+    ax.set_ylabel(ylabel)
+    ax.set_title(titulo, loc='left')
+        
 etiquetas_x = [f'{T}\n{nombre}' for T, nombre in zip(temperatura, nombres)]
 
 for ax in axs:
     ax.set_xticks(temperatura)
     ax.set_xticklabels(etiquetas_x)
     ax.grid()
-    ax.set_ylabel(ylabel)
-    ax.set_title(titulo, loc='left')
     ax.legend(frameon=True, shadow=True)
 
 axs[2].set_xlabel('Temperatura de síntesis (°C)')
 axs[3].set_xlabel('Temperatura de síntesis (°C)')
 
-plt.suptitle('Valores medios vs temperatura de síntesis\n'
+plt.suptitle('ESAR / tau /Hc / WR vs temperatura de síntesis\n'
     '300 kHz — [38, 47, 57] kA/m',fontsize=16)
 
 plt.savefig('04_metacomparativa_medias_vs_temperatura.png',
@@ -646,14 +635,10 @@ import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
 
 # Muestras y temperaturas de síntesis
-nombres = ['M18', 'M20', 'M15', 'M16', 'M17', 'M21', 'M19']
-temperaturas_sintesis = [215, 226, 235, 235, 237, 243, 250]
+nombres = ['M18', 'M20', 'M15',  'M17', 'M21', 'M19']
+temperaturas_sintesis = [215, 226, 235, 237, 243, 250]
 
-resultados = [
-    res_M18, res_M20, res_M15, res_M16,
-    res_M17, res_M21, res_M19
-]
-
+resultados = [res_M18, res_M20, res_M15, res_M17, res_M21, res_M19]
 campos = ['38 kA/m', '47 kA/m', '57 kA/m']
 
 # Paleta categórica de alto contraste: un color por muestra
@@ -661,10 +646,9 @@ colores = {
     'M18': '#0072B2',  # azul
     'M20': '#E69F00',  # naranja
     'M15': '#009E73',  # verde
-    'M16': '#CC79A7',  # rosa-violeta
-    'M17': '#D55E00',  # rojo anaranjado
-    'M21': '#56B4E9',  # celeste
-    'M19': '#000000',  # negro
+    'M17': '#CC79A7',  # rosa-violeta
+    'M21': '#D55E00',  # rojo anaranjado
+    'M19': '#56B4E9',  # celeste
 }
 
 # Estilos de línea complementarios
@@ -672,10 +656,9 @@ estilos_linea = {
     'M18': '-',
     'M20': '-',
     'M15': '-',
-    'M16': '--',
-    'M17': '-.',
-    'M21': '-',
-    'M19': ':',
+    'M17': '--',
+    'M21': '-.',
+    'M19': '-',
 }
 
 
@@ -737,23 +720,11 @@ def banda_temperatura(t, T, N=500, kind='linear'):
 
 
 # Figura: un panel por campo magnético
-fig, axs = plt.subplots(
-    1, 3,
-    figsize=(18, 5.5),
-    constrained_layout=True,
-    sharey=True
-)
+fig, axs = plt.subplots(1, 3,figsize=(18, 5.5),constrained_layout=True,sharey=True)
 
 for i, (ax, campo) in enumerate(zip(axs, campos)):
-
-    for nombre, T_sintesis, resultado in zip(
-        nombres, temperaturas_sintesis, resultados
+    for nombre, T_sintesis, resultado in zip(nombres, temperaturas_sintesis, resultados
     ):
-
-        # Tres repeticiones por campo:
-        # índices 0-2: 38 kA/m
-        # índices 3-5: 47 kA/m
-        # índices 6-8: 57 kA/m
         repeticiones = resultado[3*i:3*i+3]
 
         t = [r.time for r in repeticiones]
@@ -763,44 +734,15 @@ for i, (ax, campo) in enumerate(zip(axs, campos)):
 
         color = colores[nombre]
         estilo = estilos_linea[nombre]
-
-        # Curva promedio
-        ax.plot(
-            t_common,
-            Tmean,
-            color=color,
-            linestyle=estilo,
-            linewidth=2.2,
-            label=f'{nombre} ({T_sintesis} °C)'
-        )
-
-        # Banda min-max de las tres repeticiones
-        ax.fill_between(
-            t_common,
-            Tmin,
-            Tmax,
-            color=color,
-            alpha=0.15,
-            linewidth=0
-        )
-
+        ax.plot(t_common,Tmean,color=color,linestyle=estilo,linewidth=2.2,label=f'{nombre} ({T_sintesis} °C)')# Curva promedio
+        ax.fill_between(t_common,Tmin,Tmax,color=color,alpha=0.15,linewidth=0)# Banda min-max de las tres repeticiones
     ax.set_title(campo)
     ax.set_xlabel('Tiempo (s)')
     ax.grid(True, alpha=0.3)
     ax.legend(fontsize=8, ncol=3,loc='lower right')
-
 axs[0].set_ylabel('Temperatura (°C)')
-
-fig.suptitle(
-    'Curvas térmicas promedio por campo magnético',
-    fontsize=14
-)
-
-plt.savefig(
-    '05_curvas_termicas_promedio_por_campo.png',
-    dpi=300,
-    bbox_inches='tight'
-)
+fig.suptitle('Curvas térmicas promedio por campo magnético',fontsize=14)
+plt.savefig('05_curvas_termicas_promedio_por_campo.png',dpi=300)
 
 plt.show()
 # %%
